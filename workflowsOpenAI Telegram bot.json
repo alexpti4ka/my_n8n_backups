@@ -1,0 +1,437 @@
+{
+  "active": true,
+  "connections": {
+    "trigger": {
+      "main": [
+        [
+          {
+            "node": "event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "if_message": {
+      "main": [
+        [
+          {
+            "node": "if_command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "if_command": {
+      "main": [
+        [
+          {
+            "node": "commands",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "commands": {
+      "main": [
+        [
+          {
+            "node": "start",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "faq",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "if_prompt_exists",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "unknown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "openai_completion": {
+      "main": [
+        [
+          {
+            "node": "answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "if_prompt_exists": {
+      "main": [
+        [
+          {
+            "node": "openai_completion",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "need_prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "event": {
+      "main": [
+        [
+          {
+            "node": "if_message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2023-04-18T04:57:05.403Z",
+  "id": "3",
+  "name": "OpenAI Telegram bot",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {
+          "download": false
+        }
+      },
+      "id": "b9e1714a-b915-4c18-979a-21b173479df7",
+      "name": "trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1860,
+        580
+      ],
+      "webhookId": "036c2d95-4e18-440c-af2d-02178b89bf41",
+      "credentials": {
+        "telegramApi": {
+          "id": "1",
+          "name": "NeuroDestiny Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ \"message\" in $json }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "5a74390b-7d96-421a-b98e-3686b06f8e9e",
+      "name": "if_message",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -1460,
+        580
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json[\"message\"][\"text\"] }}",
+              "operation": "startsWith",
+              "value2": "/"
+            }
+          ]
+        }
+      },
+      "id": "b3753467-fb79-48e0-83ae-bf3b22d40124",
+      "name": "if_command",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -1280,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "prompt": "={{ $json[\"message\"][\"text\"].slice(1).split(\"\\n\").join(\" \").split(\" \").slice(1).join(\" \") }}",
+        "options": {
+          "maxTokens": 1000,
+          "temperature": 0.7
+        }
+      },
+      "id": "9788e21e-4efd-421f-9b8d-f3e64a306797",
+      "name": "openai_completion",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [
+        -600,
+        500
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "2",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "string",
+        "value1": "={{ $json[\"message\"][\"text\"].slice(1).split(\"\\n\").join(\" \").split(\" \")[0] }}",
+        "rules": {
+          "rules": [
+            {
+              "value2": "start"
+            },
+            {
+              "value2": "faq",
+              "output": 1
+            },
+            {
+              "value2": "gpt",
+              "output": 2
+            }
+          ]
+        },
+        "fallbackOutput": 3
+      },
+      "id": "cdd90334-eb40-4188-b97a-04c92a72cb8d",
+      "name": "commands",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [
+        -1100,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $node.event.json.messageA.chat.id }}",
+        "text": "=Неизвестная команда.\n\n<b>Вот какие команды я понимаю</b>: \n\n<code>/faq\n/gpt ваш вопрос </code>\n\n<i>*<b>ваш вопрос </b> вставьте вместо этого текста ваш вопрос</i>",
+        "additionalFields": {
+          "disable_web_page_preview": true,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "9c5cd433-f596-406b-828e-2c22f37b42cb",
+      "name": "unknown",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        -840,
+        780
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "1",
+          "name": "NeuroDestiny Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $node.event.json.messageA.chat.id }}",
+        "text": "=Привет, я НейроАлёнка, бот канала Нейрония Судьбы.\nЯ использую нейросеть, разработанную компанией OpenAI для генерации ответов на любые темы. А таже технологию Google Perspective для модерации контента в этом сообществе.\n\n<b>Вот какие команды я понимаю</b>: \n<code>/faq\n/gpt ваш вопрос </code>\n\n<i>*<b>ваш вопрос </b> – вставьте вместо этого текста ваш вопрос</i>",
+        "additionalFields": {
+          "disable_web_page_preview": true,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "e773a5a6-e0b0-40a5-8437-00f5ae959b91",
+      "name": "start",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        -840,
+        240
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "1",
+          "name": "NeuroDestiny Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $node.event.json.messageA.chat.id }}",
+        "text": "=<b>Доступные команды</b>: \n\n<code>/faq\n/gpt ваш вопрос</code>\n\n<i>*<b>ваш вопрос</b> – замените этот текст на ваш вопрос</i>\n\n\n<b>Например</b>: \n\n<code>/gpt что такое нейросеть?</code>\n\n<code>/gpt как прогнозировать будущее?</code>\n\n<code>/gpt придумай 5 идей подарков на день космонавтики! </code>",
+        "additionalFields": {
+          "disable_web_page_preview": true,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "3b1befca-18d5-4dd6-b353-70240a7d850a",
+      "name": "faq",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        -840,
+        420
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "1",
+          "name": "NeuroDestiny Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json[\"message\"][\"text\"].slice(1).split(\"\\n\").join(\" \").split(\" \").length > 1 }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "bf44968c-8c1c-450d-8ece-169b5939b4df",
+      "name": "if_prompt_exists",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -840,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $node.event.json.messageA.chat.id }}",
+        "text": "=<b>Ваш вопрос</b>:\n{{ $('event').first().json[\"message\"][\"text\"].slice(1).split(\"\\n\").join(\" \").split(\" \").slice(1).join(\" \") }}\n\n<b>Отвечаю</b>:\n{{ $json.text }}",
+        "additionalFields": {
+          "disable_web_page_preview": true,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "c214c60d-2b05-4172-89cc-9522709e5a5d",
+      "name": "answer",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        500
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "1",
+          "name": "NeuroDestiny Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $node.event.json.messageA.chat.id }}",
+        "text": "=Добавьте ваш вопрос после команды <code>/gpt</code> \n\n<b>Например</b>: \n<code>/gpt что такое нейросеть?</code>",
+        "additionalFields": {
+          "disable_web_page_preview": true,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "eef96eb4-a737-4180-9346-0b84d67d23cd",
+      "name": "need_prompt",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        -600,
+        700
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "1",
+          "name": "NeuroDestiny Bot"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "81115aa5-5ca0-4792-92f9-94fb6654a94e",
+      "name": "event",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -1660,
+        580
+      ]
+    }
+  ],
+  "pinData": {
+    "event": [
+      {
+        "json": {
+          "update_id": 321244059,
+          "message": {
+            "message_id": 26,
+            "from": {
+              "id": 36895840,
+              "is_bot": false,
+              "first_name": "Elena",
+              "last_name": "Ptitsyna",
+              "username": "alexpti4ka",
+              "language_code": "ru"
+            },
+            "chat": {
+              "id": -1001810130561,
+              "title": "Нейрония Судьбы: Чат",
+              "type": "supergroup"
+            },
+            "date": 1682039865,
+            "message_thread_id": 24,
+            "reply_to_message": {
+              "message_id": 25,
+              "from": {
+                "id": 223633219,
+                "is_bot": false,
+                "first_name": "P ♻️",
+                "last_name": "Z",
+                "username": "izedcabron"
+              },
+              "chat": {
+                "id": -1001810130561,
+                "title": "Нейрония Судьбы: Чат",
+                "type": "supergroup"
+              },
+              "date": 1682010090,
+              "message_thread_id": 24,
+              "text": "я просто с ней разговариваю об искусстве и философии — вполне сгодиться за дурное влияние"
+            },
+            "text": "Ахах это точно! Накидай скриншотов 🙏🏻"
+          }
+        }
+      }
+    ]
+  },
+  "settings": {},
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2023-04-23T03:53:50.000Z",
+  "versionId": "947156e0-0663-4d76-a5e6-35f89c587d82"
+}
