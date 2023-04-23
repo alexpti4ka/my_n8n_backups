@@ -1,0 +1,238 @@
+{
+  "active": false,
+  "connections": {
+    "When clicking \"Execute Workflow\"": {
+      "main": [
+        [
+          {
+            "node": "fake_data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "message_payload": {
+      "main": [
+        [
+          {
+            "node": "send_message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "event": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "fake_data": {
+      "main": [
+        [
+          {
+            "node": "event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "message_payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "vars": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2023-04-18T05:00:18.582Z",
+  "id": "7",
+  "name": "OpenAI bot by Fomin",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "f280c43f-c6cd-4d5b-aade-c2c121356578",
+      "name": "When clicking \"Execute Workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1960,
+        680
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const reply_markup = { \n  \"inline_keyboard\" : [\n    [\n      { \n        \"text\": \"Кнопка 1\", \n        \"callback_data\": `command_1` \n      },\n      { \n        \"text\": \"Кнопка 2\", \n        \"callback_data\": `command_2` \n      }\n    ],\n    [\n      { \n        \"text\": \"Кнопка 3\", \n        \"callback_data\": `command_3` \n      }\n    ]\n  ]  \n}\n\nconst message = \n  `Сообщение с инлайн кнопками.` + `\\n` +\n  `Вторая строка с <code>HTML тегами</code>` + `\\n` + \n  `\\n` + \n  `<i>Третья строка c отступом</i>`\n\nreturn [{ \n  tg_id: $('event').first().json.message.from.id, \n  reply_markup,\n  message\n}];"
+      },
+      "id": "6325819c-4e3d-46e3-84b3-aaf66dfb3795",
+      "name": "message_payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        -1300,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.telegram.org/bot{{ $('vars').first().json.bot_token }}/sendMessage",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "chat_id",
+              "value": "={{  $json.tg_id  }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.message }}"
+            },
+            {
+              "name": "parse_mode",
+              "value": "html"
+            },
+            {
+              "name": "reply_markup",
+              "value": "={{ $json.reply_markup }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c0ee9be4-34a8-4596-b943-7848066bdfbb",
+      "name": "send_message",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        -1080,
+        500
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "6d1713cf-d23b-486e-8f61-8aaec62eca0b",
+      "name": "event",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -1740,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "additionalFields": {}
+      },
+      "id": "f628745f-e068-4cdb-a3b7-ee3bd48a8465",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1960,
+        300
+      ],
+      "webhookId": "470fd60f-f463-4907-8d7e-c63404f095bd",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "number": [
+            {
+              "name": "message.from.id",
+              "value": 12312423534
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ce457d52-5536-4ea1-9bac-828aa0adc94b",
+      "name": "fake_data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        -1960,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "number": [
+            {
+              "name": "bot_token",
+              "value": 12312423534
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6c503f9f-f90b-44e3-ae67-0e45bec8a92c",
+      "name": "vars",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        -1740,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "chooseBranch",
+        "output": "input2"
+      },
+      "id": "7fef5b27-3d4e-4ed2-afc3-d1e3f7d562f6",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [
+        -1520,
+        500
+      ]
+    }
+  ],
+  "pinData": {},
+  "settings": {},
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2023-04-18T05:00:18.582Z",
+  "versionId": "5e383174-6b95-496d-a078-a4aa134888bd"
+}
