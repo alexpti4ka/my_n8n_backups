@@ -90,11 +90,21 @@
       "main": [
         [
           {
-            "node": "IF-1",
+            "node": "Data",
             "type": "main",
             "index": 0
           }
         ]
+      ]
+    },
+    "Data": {
+      "main": [
+        []
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        []
       ]
     }
   },
@@ -109,8 +119,8 @@
       "name": "RSS Feed Read",
       "type": "n8n-nodes-base.rssFeedRead",
       "position": [
-        740,
-        780
+        720,
+        680
       ],
       "typeVersion": 1,
       "id": "8d673502-1d04-43c2-894d-b88560895ad5"
@@ -124,7 +134,7 @@
       "type": "n8n-nodes-base.splitInBatches",
       "position": [
         520,
-        780
+        680
       ],
       "typeVersion": 1,
       "id": "46bca0e1-bb64-40a4-857e-e97346eec7f7"
@@ -157,8 +167,8 @@
       "name": "only get new RSS",
       "type": "n8n-nodes-base.function",
       "position": [
-        960,
-        780
+        900,
+        680
       ],
       "typeVersion": 1,
       "id": "bf2c79c6-c79f-4b6c-91aa-ee77313c0b79"
@@ -207,7 +217,7 @@
     },
     {
       "parameters": {
-        "functionCode": "return [\n  {\n    json: {\n      url: 'https://feeds.feedburner.com/UnikosHardware',\n    }\n  },\n  {\n    json: {\n      url: 'http://www.ithome.com.tw/rss.php',\n    }\n  },\n  {\n    json: {\n      url: 'http://feeds.feedburner.com/playpc',\n    }\n  },\n  {\n    json: {\n      url: 'https://lab.ocf.tw/feed/',\n    }\n  },\n  {\n    json: {\n      url: 'https://techcommunity.microsoft.com/plugins/custom/microsoft/o365/custom-blog-rss?tid=3754543230341459569&board=microsoft_365blog',\n    }\n  }\n];"
+        "functionCode": "return [\n  {\n    json: {\n      url: 'https://machinelearning.apple.com/rss.xml',\n    }\n  },\n  {\n    json: {\n      url: 'http://googleaiblog.blogspot.com/atom.xml',\n    }\n  },\n  {\n    json: {\n      url: 'http://feeds.ign.com/ign/all',\n    }\n  },\n  {\n    json: {\n      url: 'http://feeds.feedburner.com/kdnuggets-data-mining-analytics',\n    }\n  },\n  {\n    json: {\n      url: 'https://kotaku.com/rss',\n    }\n  }\n];"
       },
       "name": "RSS Source",
       "type": "n8n-nodes-base.function",
@@ -276,8 +286,8 @@
       "name": "IF-1",
       "type": "n8n-nodes-base.if",
       "position": [
-        1200,
-        780
+        1360,
+        560
       ],
       "typeVersion": 1,
       "id": "12be2b7e-2074-46a7-b4ce-9014b60e7f88"
@@ -294,6 +304,78 @@
       ],
       "typeVersion": 1,
       "id": "27c28d33-79c9-4b7c-82cf-62140b8cafa8"
+    },
+    {
+      "parameters": {},
+      "id": "ba0ea279-75f0-4246-ad0d-63a7ad9f1edc",
+      "name": "Data",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1020,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "prompt": {
+          "messages": [
+            {
+              "content": "=Привет! Представь что ты — редактор русскоязычного Телеграмм-канала «Нейрония Судьбы» об искусственном интеллекте и чудесах технологий. Прочти заголовок и описание новости и определи, подходит ли эта новость для публикации в канал. Напиши «нет» если контент не подходящий или кажется неинтересным. Напиши короткое резюме новости на русском языке если новость подходящая и интересная.\n\nЗаголовок новости:\n{{ $json[\"title\"] }}\nТекст новости:{{ $json[\"contentSnippet\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b6e08ad3-a4b1-4b43-ae53-559f47c3b605",
+      "name": "OpenAI",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [
+        1500,
+        420
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "openAiApi": {
+          "id": "2",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/engines/text-davinci-003/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "prompt",
+              "value": "="
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "adb5082d-41f8-40b5-b2df-0c662035f3b3",
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        1180,
+        360
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "5",
+          "name": "Header Auth account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -301,6 +383,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2023-04-16T03:28:58.511Z",
-  "versionId": "3c886dd5-d1a9-4891-9ae7-62dcfdbb6c60"
+  "updatedAt": "2023-04-23T07:59:13.000Z",
+  "versionId": "9511a7c6-1190-4da3-8977-5aa052013f0c"
 }
