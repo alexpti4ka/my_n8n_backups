@@ -96,16 +96,6 @@
           }
         ]
       ]
-    },
-    "Data": {
-      "main": [
-        []
-      ]
-    },
-    "OpenAI": {
-      "main": [
-        []
-      ]
     }
   },
   "createdAt": "2023-04-16T03:28:58.511Z",
@@ -373,7 +363,7 @@
       "credentials": {
         "httpHeaderAuth": {
           "id": "5",
-          "name": "Header Auth account"
+          "name": "OpenAI HTTP key"
         }
       }
     }
@@ -383,6 +373,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2023-04-23T07:59:13.000Z",
-  "versionId": "9511a7c6-1190-4da3-8977-5aa052013f0c"
+  "updatedAt": "2023-04-24T02:26:25.000Z",
+  "versionId": "5b90af4f-18bb-41a6-9fc2-c59190a0b845"
 }
