@@ -1,0 +1,15 @@
+{
+  "active": false,
+  "connections": {},
+  "createdAt": "2023-05-04T02:25:04.076Z",
+  "id": "8",
+  "name": "Yandex Wordstat",
+  "nodes": [],
+  "pinData": {},
+  "settings": {},
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2023-05-04T02:25:04.076Z",
+  "versionId": "b87b2ed2-a29a-49f3-bb6c-11ce982a8818"
+}
