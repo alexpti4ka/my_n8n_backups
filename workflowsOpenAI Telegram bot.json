@@ -193,6 +193,7 @@
         -600,
         500
       ],
+      "retryOnFail": true,
       "credentials": {
         "openAiApi": {
           "id": "2",
@@ -232,7 +233,7 @@
     },
     {
       "parameters": {
-        "chatId": "={{ $node.event.json.messageA.chat.id }}",
+        "chatId": "={{$('event').first().json.message.chat.id }}",
         "text": "=Неизвестная команда.\n\n<b>Вот какие команды я понимаю</b>: \n\n<code>/faq\n/gpt ваш вопрос </code>\n\n<i>*<b>ваш вопрос </b> вставьте вместо этого текста ваш вопрос</i>",
         "additionalFields": {
           "disable_web_page_preview": true,
@@ -256,7 +257,7 @@
     },
     {
       "parameters": {
-        "chatId": "={{ $node.event.json.messageA.chat.id }}",
+        "chatId": "={{$('event').first().json.message.chat.id }}",
         "text": "=Привет, я НейроАлёнка, бот канала Нейрония Судьбы.\nЯ использую нейросеть, разработанную компанией OpenAI для генерации ответов на любые темы. А таже технологию Google Perspective для модерации контента в этом сообществе.\n\n<b>Вот какие команды я понимаю</b>: \n<code>/faq\n/gpt ваш вопрос </code>\n\n<i>*<b>ваш вопрос </b> – вставьте вместо этого текста ваш вопрос</i>",
         "additionalFields": {
           "disable_web_page_preview": true,
@@ -280,7 +281,7 @@
     },
     {
       "parameters": {
-        "chatId": "={{ $node.event.json.messageA.chat.id }}",
+        "chatId": "={{$('event').first().json.message.chat.id }}",
         "text": "=<b>Доступные команды</b>: \n\n<code>/faq\n/gpt ваш вопрос</code>\n\n<i>*<b>ваш вопрос</b> – замените этот текст на ваш вопрос</i>\n\n\n<b>Например</b>: \n\n<code>/gpt что такое нейросеть?</code>\n\n<code>/gpt как прогнозировать будущее?</code>\n\n<code>/gpt придумай 5 идей подарков на день космонавтики! </code>",
         "additionalFields": {
           "disable_web_page_preview": true,
@@ -324,7 +325,7 @@
     },
     {
       "parameters": {
-        "chatId": "={{ $node.event.json.messageA.chat.id }}",
+        "chatId": "={{$('event').first().json.message.chat.id }}",
         "text": "=<b>Ваш вопрос</b>:\n{{ $('event').first().json[\"message\"][\"text\"].slice(1).split(\"\\n\").join(\" \").split(\" \").slice(1).join(\" \") }}\n\n<b>Отвечаю</b>:\n{{ $json.text }}",
         "additionalFields": {
           "disable_web_page_preview": true,
@@ -348,7 +349,7 @@
     },
     {
       "parameters": {
-        "chatId": "={{ $node.event.json.messageA.chat.id }}",
+        "chatId": "={{$('event').first().json.message.chat.id }}",
         "text": "=Добавьте ваш вопрос после команды <code>/gpt</code> \n\n<b>Например</b>: \n<code>/gpt что такое нейросеть?</code>",
         "additionalFields": {
           "disable_web_page_preview": true,
@@ -432,6 +433,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2023-04-23T03:53:50.000Z",
-  "versionId": "947156e0-0663-4d76-a5e6-35f89c587d82"
+  "updatedAt": "2023-05-05T10:13:56.000Z",
+  "versionId": "71746df2-3566-4a17-b9c4-99897b4d2744"
 }
